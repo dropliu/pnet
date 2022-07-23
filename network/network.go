@@ -1,6 +1,9 @@
 package network
 
-import "context"
+import (
+	"context"
+	"time"
+)
 
 type (
 
@@ -16,10 +19,13 @@ type (
 	Listener interface {
 		// Accept 监听新的连接
 		Accept() (Conn, error)
+		Addr() string
 	}
 
 	// Conn 连接抽象，主要作用就是生成流
 	Conn interface {
+		// AcceptStream 监听新的流
+		AcceptStream(context.Context) (Stream, error)
 		// NewStream 在连接上创建一条流
 		NewStream(context.Context) (Stream, error)
 		// 改变该连接
@@ -36,5 +42,10 @@ type (
 		Write(p []byte) (n int, err error)
 		// 关闭流
 		Close() error
+
+		// SetDeadline 设置deadline
+		SetDeadline(time.Time) error
+		SetReadDeadline(time.Time) error
+		SetWriteDeadline(time.Time) error
 	}
 )
